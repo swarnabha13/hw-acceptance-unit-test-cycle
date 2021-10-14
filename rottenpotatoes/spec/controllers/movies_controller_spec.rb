@@ -35,17 +35,18 @@ RSpec.describe MoviesController, type: :controller do
         end
     end
 
-    describe 'Update a movie' do
-        it 'Should update a movie based on parameters passed and then redirect to corresponding movie page' do
-            movie = Movie.create({:title => 'Aladdin', :rating => 'G', :release_date => '28-Nov-1992'})
-            params = ActionController::Parameters.new(id: movie.id, movie: { title: "Aladdin", rating: 'G', release_date: "25-Nov-1992" })
-            post :update, params
-            response.code.should == "302"
-            response.should redirect_to(movie_path(movie))
-            get :index
-            expect(response.body).to include("Aladdin")
-            expect(response.body).to include("PG")
-            expect(response.body).not_to include("25-Nov-1992")
+    describe 'Check data consistency for director field' do
+        it 'If there is a director return movies with that director' do
+            movie1 = Movie.create({:title => 'Star Wars', :rating => 'PG', :director => 'George Lucas'})
+            movie2 = Movie.create({:title => 'THX-1138', :rating => 'R', :director => 'George Lucas'})
+            directors = Movie.with_director(movie1.director)
+            expect(directors).not_to be_empty
+            expect(directors.size()).to be 2
+        end
+        it 'If there is no director return nil' do
+            movie1 = Movie.create({:title => 'Alien', :rating => 'R'})
+            directors = Movie.with_director(movie1.director)
+            expect(directors).to be nil
         end
     end
 
