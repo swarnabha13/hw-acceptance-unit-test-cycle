@@ -23,3 +23,8 @@ Then /I should see all the movies/ do
     step %{I should see "#{movie.title}"}
   end
 end
+  
+When /the director of "(.*)" should be "(.*)"/ do |e1,e2|
+  expect(page.body.index(e1)) != nil;
+  expect(page.body.index(e2)) != nil;
+end
